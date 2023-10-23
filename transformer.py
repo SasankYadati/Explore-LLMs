@@ -120,7 +120,7 @@ class Block(nn.Module):
         x = x + self.ffwd(self.ln2(x))
         return x
 
-class BigramLanguageModel(nn.Module):
+class Transformer(nn.Module):
     def __init__(self):
         super().__init__()
         self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
@@ -159,20 +159,21 @@ class BigramLanguageModel(nn.Module):
             idx = torch.cat((idx, idx_next), dim=1)
         return idx
 
-m = BigramLanguageModel().to(device)
-optimizer = torch.optim.Adam(m.parameters(), lr=1e-3)
+m = Transformer().to(device)
+print(sum(p.numel() for p in m.parameters() if p.requires_grad))
+# optimizer = torch.optim.Adam(m.parameters(), lr=1e-3)
 
-for iter in range(max_iters):
+# for iter in range(max_iters):
 
-    if iter % eval_interval == 0:
-        losses = estimate_loss()
-        print(f"step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+#     if iter % eval_interval == 0:
+#         losses = estimate_loss()
+#         print(f"step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
     
-    xb, yb = get_batch('train')
-    logits, loss = m(xb, yb)
-    optimizer.zero_grad(set_to_none=True)
-    loss.backward()
-    optimizer.step()
+#     xb, yb = get_batch('train')
+#     logits, loss = m(xb, yb)
+#     optimizer.zero_grad(set_to_none=True)
+#     loss.backward()
+#     optimizer.step()
 
-context = torch.zeros((1,1), dtype=torch.long, device=device)
-print(decode(m.generate(context, max_new_tokens=500)[0].tolist()))
+# context = torch.zeros((1,1), dtype=torch.long, device=device)
+# print(decode(m.generate(context, max_new_tokens=500)[0].tolist()))
